@@ -1,0 +1,91 @@
+
+import java.util.Scanner;
+
+public class Exercice51 {
+
+    // Méthode pour trouver le minimum
+    public static int min(int[] tableau) {
+        int minimum = tableau[0];
+
+        for (int i = 1; i < tableau.length; i++) {
+            if (tableau[i] < minimum) {
+                minimum = tableau[i];
+            }
+        }
+
+        return minimum;
+    }
+
+    // Méthode pour trouver le maximum
+    public static int max(int[] tableau) {
+        int maximum = tableau[0];
+
+        for (int i = 1; i < tableau.length; i++) {
+            if (tableau[i] > maximum) {
+                maximum = tableau[i];
+            }
+        }
+
+        return maximum;
+    }
+
+    // Méthode pour calculer la moyenne
+    public static double moyenne(int[] tableau) {
+        int somme = 0;
+
+        for (int i = 0; i < tableau.length; i++) {
+            somme += tableau[i];
+        }
+
+        return (double) somme / tableau.length;
+    }
+
+    // Méthode principale
+    public static void main(String[] args) {
+        Scanner clavier = new Scanner(System.in);
+
+        System.out.print("Entrez le nombre d'entiers : ");
+        int n = clavier.nextInt();
+
+        if (n <= 0) {
+            System.out.println("Le nombre d'entiers doit être positif.");
+            clavier.close();
+            return;
+        }
+
+        int[] tableau = new int[n];
+
+        // Lecture des entiers
+        for (int i = 0; i < n; i++) {
+            System.out.print("Entrez l'entier " + (i + 1) + " : ");
+            tableau[i] = clavier.nextInt();
+        }
+
+        // Calcul des résultats
+        int minimum = min(tableau);
+        int maximum = max(tableau);
+        double moy = moyenne(tableau);
+
+        // Comptage des valeurs supérieures à la moyenne
+        int compteur = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (tableau[i] > moy) {
+                compteur++;
+            }
+        }
+
+        // Affichage des résultats
+        System.out.println("\n--- Résultats ---");
+        System.out.println("Minimum : " + minimum);
+        System.out.println("Maximum : " + maximum);
+        System.out.printf("Moyenne : %.2f%n", moy);
+        System.out.println(
+            "Nombre de valeurs supérieures à la moyenne : " + compteur
+        );
+
+        clavier.close();
+    }
+}```{
+
+}
