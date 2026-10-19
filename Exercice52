@@ -1,0 +1,57 @@
+
+import java.util.Arrays;
+
+public class Exercice52 {
+
+    // Méthode 1 : inverse le tableau original
+    public static void inverser(int[] t) {
+        int gauche = 0;
+        int droite = t.length - 1;
+
+        while (gauche < droite) {
+            int temp = t[gauche];
+            t[gauche] = t[droite];
+            t[droite] = temp;
+
+            gauche++;
+            droite--;
+        }
+    }
+
+    // Méthode 2 : retourne un nouveau tableau inversé
+    public static int[] inverse(int[] t) {
+        int[] resultat = new int[t.length];
+
+        for (int i = 0; i < t.length; i++) {
+            resultat[i] = t[t.length - 1 - i];
+        }
+
+        return resultat;
+    }
+
+    // Méthode principale
+    public static void main(String[] args) {
+
+        int[] tableau = {10, 20, 30, 40, 50};
+
+        // Test de la première méthode
+        System.out.println("Tableau original : "
+                + Arrays.toString(tableau));
+
+        inverser(tableau);
+
+        System.out.println("Après inverser() : "
+                + Arrays.toString(tableau));
+
+        // Test de la deuxième méthode
+        int[] t = {10, 20, 30, 40, 50};
+
+        int[] resultat = inverse(t);
+
+        System.out.println("Tableau initial : "
+                + Arrays.toString(t));
+
+        System.out.println("Nouveau tableau inversé : "
+                + Arrays.toString(resultat));
+    }
+}
