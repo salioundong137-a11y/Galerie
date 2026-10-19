@@ -1,0 +1,24 @@
+
+import java.util.Arrays;
+
+public class ReferenceTableau {
+    public static void main(String[] args) {
+        int[] stockLundi = { 10, 20, 30 };
+        int[] alias = stockLundi;
+        // même tableau !
+        alias[0] = 0;
+        System.out.println(Arrays.toString(stockLundi));
+        // [0, 20, 30]
+        int[] copie = Arrays.copyOf(stockLundi, stockLundi.length); // vraie copie
+        copie[1] = 99;
+        System.out.println(Arrays.toString(stockLundi) + " / " + Arrays.toString(copie));
+        int[] agrandi = Arrays.copyOf(stockLundi, 5);
+        //// copie + agrandissement
+        System.out.println(Arrays.toString(agrandi));
+        System.out.println(stockLundi == copie);
+        // //false : objets différents
+        //// true : même contenu
+        System.out.println(Arrays.equals(stockLundi, new int[] { 0, 20, 30 }));
+    }
+
+}
