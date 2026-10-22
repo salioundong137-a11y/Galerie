@@ -1,0 +1,11 @@
+Public Class Tarif{
+Public static main(){
+int nb copie;
+double prix;
+   if(nbcopie<=10){
+      prix=nbcopie+0.10;
+}else if(nbcopie>10 28nbcopie<=30)
+{prix=10*0,10+(nbcopie-10)10;
+}else{
+prix=10*0.10+20*0.08+(nbcopie-30);
+System.out.println("le prix des "+nbcopie+"copie(S)=" +prix);
