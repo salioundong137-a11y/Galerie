@@ -1,0 +1,74 @@
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!-- Élément principal -->
+    <xs:element name="breakfast_menu">
+        <xs:complexType>
+            <xs:sequence>
+
+                <!-- Plusieurs aliments -->
+                <xs:element name="food" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+
+                            <!-- Nom de l'aliment -->
+                            <xs:element name="name" type="xs:string"/>
+
+                            <!-- Prix strictement supérieur à 0 -->
+                            <xs:element name="price">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="prixType">
+                                            <xs:attribute name="unit"
+                                                          type="xs:string"
+                                                          use="required"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+
+                            <!-- Description -->
+                            <xs:element name="description"
+                                        type="xs:string"/>
+
+                            <!-- Calories entre 100 et 2000 -->
+                            <xs:element name="calories">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:integer">
+                                        <xs:minInclusive value="100"/>
+                                        <xs:maxInclusive value="2000"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+
+                        </xs:sequence>
+
+                        <!-- Catégorie obligatoire -->
+                        <xs:attribute name="category" use="required">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="sweet"/>
+                                    <xs:enumeration value="salty"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+
+                    </xs:complexType>
+                </xs:element>
+
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Type du prix -->
+    <xs:simpleType name="prixType">
+        <xs:restriction base="xs:decimal">
+            <xs:minExclusive value="0"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
+```
