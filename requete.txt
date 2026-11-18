@@ -1,0 +1,15 @@
+Q1
+expression: /document/@cote
+résultat: LIV-014
+
+Q2
+expression: /document/auteur[2]
+résultat: Awa Sy
+
+Q3
+expression: count(/document/auteur)
+résultat: 2
+
+Q4
+expression: /document[@disponible='true' or @disponible='1']/titre
+résultat: Le Jardin des Sables
