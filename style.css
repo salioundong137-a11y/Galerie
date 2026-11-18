@@ -1,0 +1,30 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 30px auto;
+    color: #222222;
+}
+
+h1 {
+    color: #1F4E79;
+    border-bottom: 3px solid #2E75B6;
+    padding-bottom: 6px;
+}
+
+h2 {
+    color: #2E75B6;
+}
+
+.infos {
+    background-color: #F0F6FC;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+ul {
+    line-height: 1.8;
+}
+
+.etat {
+    font-weight: bold;
+}
