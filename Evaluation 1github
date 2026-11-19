@@ -1,0 +1,216 @@
+# REPONSES.md — TP Git & GitHub
+
+**Nom et prénom :**Saliou Ndong ………………………  **Classe :** …DBE……………  **Date :** ……17/11/2026S…………
+
+---
+
+## Partie 1 — Installer et configurer Git
+
+**Q1. Dans quel fichier `--global` enregistre-t-elle la configuration ? Différence avec `.git/config` ?**
+
+Avec `--global`, la configuration est écrite dans le fichier `~/.gitconfig` (dossier personnel de l'utilisateur). Elle s'applique à **tous** les dépôts de cet utilisateur.
+Sans `--global`, faite dans un dépôt, elle est écrite dans `.git/config` et ne vaut que pour **ce dépôt**. Elle est prioritaire sur la configuration globale.
+
+**Q2. Pourquoi l'email doit-il correspondre à celui du compte GitHub ?**
+
+GitHub rattache chaque commit à un profil grâce à l'email enregistré dans le commit. Si l'email ne correspond à aucun email du compte, les commits sont bien envoyés mais n'apparaissent pas sous votre profil (pas d'avatar, pas de contribution comptée).
+
+---
+
+## Partie 2 — Premier dépôt local
+
+**Q3. Que contient le dossier `.git` ? Que perdrait-on en le supprimant ?**
+
+Il contient tout le dépôt : l'historique (les commits et objets), les branches et étiquettes, `HEAD`, l'index (zone de préparation), la configuration locale (`config`) et les remotes.
+En le supprimant, on perd **tout l'historique** et le lien avec GitHub : il ne reste que les fichiers du répertoire de travail, qui ne sont plus versionnés.
+
+**Q4. Différence entre `git diff` et `git diff --staged` ?**
+
+- `git diff` compare le répertoire de travail à l'index : les modifications **pas encore indexées**.
+- `git diff --staged` compare l'index au dernier commit : ce qui **partira dans le prochain commit**.
+
+**Q5. Que représente la suite de caractères au début de chaque ligne de `git log --oneline` ?**
+
+C'est l'identifiant (hash SHA-1) abrégé du commit, ses 7 premiers caractères. Il identifie le commit de façon unique et permet de le désigner (`git show`, `git revert`, `git reset`…).
+
+---
+
+## Partie 3 — Corriger et annuler
+
+**Q6. Pourquoi ne versionne-t-on pas `Main.class` ? Rôle de `.gitignore` ?**
+
+`Main.class` est un fichier **généré** (bytecode) : on peut toujours le recréer avec `javac`, il est binaire, il change à chaque compilation et provoque du bruit et des conflits inutiles.
+Le `.gitignore` liste les motifs à ignorer (`*.class`, `*~`) : Git ne les affiche plus comme non suivis, donc `git add .` n'ajoute pas par erreur les fichiers générés.
+
+**Q7. Différence entre `git revert` et `git reset` ? Lequel sur une branche partagée ?**
+
+- `git revert <id>` crée un **nouveau commit** qui défait un ancien commit. L'historique est conservé.
+- `git reset` **déplace la branche** vers un commit antérieur et réécrit l'historique (avec `--hard`, le travail est perdu).
+
+Sur une branche déjà partagée sur GitHub, on utilise **`git revert`** : `reset` réécrirait un historique que les autres ont déjà récupéré, ce qui créerait des divergences et des conflits pour tout le monde.
+
+**Q8. Que signifie `HEAD~1` ? Que veut dire « detached HEAD » ?**
+
+`HEAD` désigne le commit courant ; `HEAD~1` est son **parent** (le commit juste avant).
+« Detached HEAD » (HEAD détaché) signifie que `HEAD` pointe directement vers un commit et non vers une branche. On peut consulter l'ancienne version, mais les nouveaux commits ne seraient rattachés à aucune branche (risque de les perdre). On revient au présent avec `git switch main`.
+
+---
+
+## Partie 4 — Branches, fusion et conflits
+
+**Q9. Pourquoi la multiplication est-elle absente de `Main.java` à l'étape 4.2 ?**
+
+Le fichier est le même, mais **sa version dépend de la branche**. La méthode a été commitée sur la branche `multiplication`. En revenant sur `main`, Git remet dans le répertoire de travail la version du dernier commit de `main`, qui ne contient pas encore la multiplication.
+
+**Q10. Qu'est-ce qu'un fast-forward ? Pourquoi l'étape 4.4 a-t-elle créé un commit de fusion ?**
+
+Un fast-forward a lieu quand `main` n'a pas avancé depuis la création de la branche : Git avance simplement le pointeur de `main` jusqu'au dernier commit de la branche, sans créer de nouveau commit.
+À l'étape 4.4, `main` **et** `titre` ont chacune reçu un commit différent (historiques divergents). Git doit donc combiner les deux lignes et crée un **commit de fusion** à deux parents.
+
+**Q11. Que signifient `<<<<<<< HEAD`, `=======` et `>>>>>>> titre` ? Quand Git ne peut-il pas fusionner seul ?**
+
+- `<<<<<<< HEAD` … `=======` : la version de la branche courante (ici `main`).
+- `=======` … `>>>>>>> titre` : la version de la branche fusionnée (`titre`).
+
+Git ne peut pas fusionner seul quand **les deux branches ont modifié la même zone du même fichier de façon différente** (ou quand l'une supprime ce que l'autre modifie). Il faut alors choisir à la main, supprimer les marqueurs, puis `git add` et `git commit`.
+
+---
+
+## Partie 5 — Publier sur GitHub
+
+**Q12. Que désigne `origin` ? Que fait `-u` ?**
+
+`origin` est le nom (alias) par défaut du dépôt distant, ici le dépôt GitHub : il remplace l'URL longue.
+L'option `-u` (`--set-upstream`) mémorise le lien entre la branche locale `main` et `origin/main` : ensuite `git push` et `git pull` suffisent, sans préciser le remote ni la branche.
+
+**Q13. Différence entre `git fetch` et `git pull` ?**
+
+`git fetch` télécharge les nouveaux commits du dépôt distant **sans rien fusionner** dans votre travail. `git pull` = `git fetch` + `git merge` : il télécharge puis fusionne dans la branche courante.
+
+**Q14. Pourquoi le `git push` de l'étape 5.5 a-t-il été refusé ? Bonne habitude ?**
+
+Le dépôt distant contenait un commit (celui de `poste2`) absent du dépôt local : les deux historiques avaient divergé, et Git refuse d'écraser le travail distant (`rejected`).
+Bonne habitude : faire **`git pull` avant `git push`** (ou au moins `git fetch` puis `git status`), résoudre les éventuels conflits, puis pousser.
+
+---
+
+## Partie 6 — Collaborer : fork, pull request et issues
+
+**Q15. Différence entre un fork, un clone et une branche ?**
+
+- **Fork** : copie d'un dépôt GitHub vers **votre compte** GitHub (copie distante, indépendante de l'original).
+- **Clone** : copie d'un dépôt distant **sur votre machine** (avec tout l'historique).
+- **Branche** : ligne de développement parallèle **à l'intérieur d'un même dépôt**.
+
+**Q16. Pourquoi proposer une PR depuis une branche dédiée plutôt que depuis `main` ?**
+
+- `main` reste propre et synchronisable avec le dépôt d'origine.
+- Chaque PR ne contient que les commits d'une seule fonctionnalité, donc plus facile à relire.
+- On peut travailler sur plusieurs fonctionnalités en parallèle, et continuer à corriger la PR (un nouveau push met la PR à jour).
+
+**Q17. À quoi servent `origin` et `upstream` dans le dépôt de B ?**
+
+- `origin` : le **fork de B** sur GitHub, où B envoie ses branches (`git push`).
+- `upstream` : le **dépôt d'origine de A**, d'où B récupère les mises à jour (`git fetch upstream`, `git merge upstream/main`) pour garder son fork à jour.
+
+---
+
+## Partie 7 — LearnGitBranching
+
+**Q18. Trois niveaux de mon choix**
+
+> À compléter avec **vos propres résultats** après avoir fait les niveaux sur le site (je ne peux pas les faire à votre place). Exemple de format :
+
+| Niveau | Mes commandes | Mon score / solution optimale |
+|---|---|---|
+| Main — *Introduction : Branching in Git* | `git branch bugFix` ; `git checkout bugFix` | 2 / 2 |
+| Main — *Merging in Git* | `git branch bugFix` ; `git checkout bugFix` ; `git commit` ; `git checkout main` ; `git commit` ; `git merge bugFix` | … / … |
+| Remote — *Git Fetch* | … | … / … |
+
+---
+
+## Bilan — Questions de cours
+
+1. **Trois zones :** répertoire de travail → index (`git add`) → dépôt local (`git commit`) ; puis dépôt local → dépôt distant (`git push`).
+2. `git log --oneline --graph --all`
+3. `git restore --staged secret.txt` (ou `git rm --cached secret.txt` si le fichier était déjà suivi) : le fichier sort de l'index mais reste sur le disque.
+4. `git revert <id>` : crée un nouveau commit qui défait le bug, sans réécrire l'historique.
+5. `git switch -c dev` **crée la branche et s'y place** ; `git branch dev` crée la branche mais **reste** sur la branche courante.
+6. Le push est rejeté car le distant contient des commits que je n'ai pas en local. Je fais `git pull`, je résous les conflits éventuels, puis `git push`.
+7. `.gitignore` indique à Git les fichiers à ne pas suivre (fichiers générés, secrets, temporaires). Ligne pour les `.log` : `*.log`
+8. **Git** est l'outil de gestion de versions, local, en ligne de commande. **GitHub** est un service en ligne qui héberge des dépôts Git et ajoute la collaboration (fork, pull request, issues).
+
+---
+
+## Exercice pratique type — suite de commandes
+
+```bash
+# 1. Dépôt, fichier et premier commit
+mkdir examen && cd examen
+git init
+echo "Ligne 1 : version initiale" > notes.txt
+git add notes.txt
+git commit -m "Ajoute notes.txt"
+
+# 2. Branche correction : modifier la ligne 1 et commiter
+git switch -c correction
+echo "Ligne 1 : version corrigée" > notes.txt
+git commit -am "Corrige la ligne 1 sur la branche correction"
+
+# 3. Retour sur main : modifier la même ligne autrement
+git switch main
+echo "Ligne 1 : version de main" > notes.txt
+git commit -am "Modifie la ligne 1 sur main"
+
+# 4. Fusion avec conflit, résolution, commit
+git merge correction            # CONFLICT (content): Merge conflict in notes.txt
+nano notes.txt                  # garder la version voulue, supprimer <<<<<<<, =======, >>>>>>>
+git add notes.txt
+git commit -m "Fusionne correction (résolution du conflit)"
+
+# 5. Publier sur GitHub (dépôt vide "examen" créé avant sur GitHub) et supprimer la branche
+git remote add origin git@github.com:<utilisateur>/examen.git
+git push -u origin main
+git branch -d correction
+```
+
+---
+
+## Commandes du TP à exécuter (rappel du déroulé, pour obtenir les 8 commits et la PR)
+
+```bash
+# Partie 1
+git config --global user.name "Prénom Nom"
+git config --global user.email "email-github@exemple.com"
+git config --global init.defaultBranch main
+git config --global core.editor nano
+
+# Partie 2
+mkdir ~/tp-git && cd ~/tp-git && git init
+# créer Main.java, puis :
+echo "# Calculatrice" > README.md
+git add Main.java README.md
+git commit -m "Ajoute la méthode addition et le README"
+# ajouter soustraction, puis :
+git add Main.java && git commit -m "Ajoute la méthode soustraction"
+# créer REPONSES.md (ce fichier)
+git add REPONSES.md && git commit -m "Ajoute les réponses du TP"
+
+# Partie 3
+printf '*.class\n*~\n' > .gitignore
+git add .gitignore && git commit -m "Ajoute .gitignore"
+
+# Partie 4
+git switch -c multiplication      # ajouter la méthode, tester, commiter
+git switch main && git merge multiplication
+
+# Partie 5
+git remote add origin git@github.com:<utilisateur>/tp-git-<nom>.git
+git push -u origin main
+
+# Partie 6 (seul) : branche puissance -> pull request vers main dans son propre dépôt
+git switch -c puissance
+git commit -am "Ajoute la méthode puissance"
+git push -u origin puissance      # puis Compare & pull request et Merge sur GitHub
+git switch main && git pull
+```
